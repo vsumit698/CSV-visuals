@@ -1,0 +1,142 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= locals.title%></title>
+    <link rel="stylesheet" href="/css/viewFile.css">
+</head>
+
+<body>
+    <a href="/">HOME</a>
+    
+    <div id="table-view">
+        <h3>Viewing - <%= fileName %>  </h3>
+        <div id="control-layout">
+            <input type="text" id="search-bar">
+            <button id="search-btn">SEARCH</button>
+            <span style="margin: 30px;">
+                <label for="searchFilter">Choose Search Option</label>
+                <select id="searchFilter">
+            </span>
+            </select>
+        </div>
+        <table id="file-table" style="margin-left: 30px;">
+
+            <tr >
+                <% for( let prop in results[0]) { %>
+                    <th class="col-headers">
+                        <%= prop %> 
+                    </th>
+                <% } %>
+            </tr>
+
+
+            <% for( let index = 0; index < results.length; index++ ) { %>
+
+                <tr>
+                    <% for( let prop in results[index]) { %>
+                        <td>
+                            <%= results[index][prop] %> 
+                        </td>
+                    <% } %>
+                </tr>
+
+            <% } %>
+
+
+        </table>
+    </div>
+
+    <script>
+
+        var searchBtn = document.getElementById('search-btn');
+        var fileTable = document.getElementById('file-table');
+        var tableView = document.getElementById('table-view');
+        var searchBar = document.getElementById('search-bar');
+        var dropDown = document.getElementById('searchFilter');
+
+        function prepareData(){
+            var keys = getKeys();
+            var results = [];
+            var output = [];
+            var tableEleArr = fileTable.children[0].children;
+            for(let id=1;tableEleArr.length>id;id++){
+                let tr = tableEleArr[id].children;
+                let obj = {};
+                for(let td=0;tr.length>td;td++){
+                    obj[keys[td]] = tr[td].innerText;
+                }
+                results.push(obj);
+            }
+            output[0] = keys;
+            output[1] = results;
+            // setup all searchFilter...
+            for(let key of keys){
+                var Option = document.createElement('option');
+                Option.innerText = key;
+                dropDown.appendChild(Option); 
+            }
+
+
+            return output;
+        };
+
+        var output = prepareData();
+
+        function getKeys(){
+            var colHeaders = document.getElementsByClassName('col-headers');
+            var id=0;
+            var keys=[];
+            for(let item of colHeaders){
+                keys[id++] = item.innerText;
+            }
+            return keys;
+        };
+
+        searchBtn.onclick = function(){
+            var searchText = searchBar.value;
+            if(searchText!=""){
+                modifyTable(searchText,dropDown.value);
+            }
+        };
+
+
+        function modifyTable(searchText,searchFilter){
+            document.getElementById('file-table').remove();
+            var table = document.createElement('table');
+            table.setAttribute('id','file-table');
+            tableView.appendChild(table);
+
+            var colHeaders = document.createElement('tr');
+            table.appendChild(colHeaders);
+            var keys = output[0];
+            var results = output[1];
+            // preparing headers of table
+            for(let key of keys){
+                var colHeader = document.createElement('th');
+                colHeader.innerText = key;
+                colHeaders.appendChild(colHeader);
+            }
+
+           // preparing data values of table
+
+           for(let data of results){
+               if(data[searchFilter] == searchText){
+                   insertData(data,table);
+                }
+            }
+        }
+
+        function insertData(data,table){
+            var tableRow = document.createElement('tr');
+            for(let prop in data){
+                var tableData = document.createElement('td');
+                tableData.innerText = data[prop];
+                tableRow.appendChild(tableData);
+            }
+            table.appendChild(tableRow);
+        }
+    </script>
+</body>
+
+</html>

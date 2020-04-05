@@ -1,0 +1,41 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= locals.title%></title>
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+
+<body>
+    
+    <div>
+        <h1> Welcome To CSV FILE VISUALIZER </h1>
+        <div id="home-section">
+
+            <div>
+                <h3>upload csv file</h3>
+                <form action="/upload_file" method="POST" enctype="multipart/form-data">
+                
+                    <div><input type="file" name="csvFile" placeholder="Enter Your CSV FILE"></div>
+                    <button type="submit">UPLOAD</button>
+        
+                </form>
+            </div>
+
+            <div>
+                <h3>choose file to view</h3>
+                <ol>
+                    <% for( let file of locals.files) { %>
+                        <li> <a href="/openFile/<%= file.id%>"> <%= file.fileName %> </a> </li>
+                    <% } %>
+                </ol>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script src="/js/homeEJS.js"></script>
+</body>
+
+</html>
